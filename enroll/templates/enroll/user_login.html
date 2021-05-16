@@ -1,0 +1,19 @@
+{% extends 'enroll/base.html'%}
+{% block title %} login user {% endblock %}
+{% block content %}
+<form method="post" action="" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+    <p>{{ error }}</p>
+    {% endfor %}
+    {% endif %}
+    {% for fm in form %}
+    {{ fm.label_tag }} {{ fm }} {{ fm.errors|striptags }}<br><br>
+    {% endfor %}
+    <input type="submit" value="Login">
+</form>
+<p>
+    <a href="/enroll/sign_up">Sign Up</a>
+</p>
+{% endblock %}
