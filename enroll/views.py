@@ -2,8 +2,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponseRedirect
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 
 
 from enroll.forms import SignUpForm
@@ -51,11 +51,17 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/enroll/user_login')
 
-
-
-
-
-
-
-
+def changepass(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = PasswordChangeForm(user=request.user, data=request.POST)
+            if form.is_valid():
+                form.save()
+                update_session_auth_hash(request, form.user)
+                return redirect('/enroll/profile')
+        else:
+            form = PasswordChangeForm(request.user)
+        return render(request, 'enroll/changepass.html', {'form': form})
+    else:
+        return redirect('/enroll/user_login')
 # Create your views here.
